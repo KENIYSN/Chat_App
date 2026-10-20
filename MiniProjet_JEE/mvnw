@@ -1,0 +1,33 @@
+#!/bin/sh
+# Maven Wrapper Script (simplifié pour macOS/Linux)
+# Se télécharge et exécute Maven automatiquement si pas installé.
+
+set -e
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROPS="$SCRIPT_DIR/.mvn/wrapper/maven-wrapper.properties"
+
+# Lire l'URL de distribution
+DISTRIBUTION_URL=$(grep "distributionUrl" "$PROPS" | sed 's/distributionUrl=//')
+MAVEN_VERSION=$(echo "$DISTRIBUTION_URL" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+MAVEN_HOME="$HOME/.m2/wrapper/dists/apache-maven-$MAVEN_VERSION"
+
+# Télécharger Maven si absent
+if [ ! -d "$MAVEN_HOME" ]; then
+    echo "Téléchargement de Maven $MAVEN_VERSION depuis Maven Central..."
+    mkdir -p "$MAVEN_HOME"
+    TMPFILE=$(mktemp /tmp/maven-XXXXXX.zip)
+    curl -fsSL "$DISTRIBUTION_URL" -o "$TMPFILE"
+    unzip -q "$TMPFILE" -d "$MAVEN_HOME"
+    rm "$TMPFILE"
+    echo "Maven $MAVEN_VERSION installé dans $MAVEN_HOME"
+fi
+
+# Localiser l'exécutable mvn
+MVN_BIN=$(find "$MAVEN_HOME" -name "mvn" -not -name "*.cmd" | head -1)
+
+if [ -z "$MVN_BIN" ]; then
+    echo "Erreur : impossible de localiser l'exécutable Maven." >&2
+    exit 1
+fi
+
+exec "$MVN_BIN" "$@"

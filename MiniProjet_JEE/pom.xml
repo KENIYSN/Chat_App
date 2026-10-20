@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ===== Identité du projet ===== -->
+    <groupId>com.chat</groupId>
+    <artifactId>chat-realtime</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Chat Temps Réel - Backend JEE</name>
+    <description>Backend WebSocket pour une application de chat en temps réel avec serveur embarqué Tyrus</description>
+
+    <properties>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Versions des dépendances -->
+        <tyrus.version>2.1.3</tyrus.version>
+        <jackson.version>2.17.1</jackson.version>
+        <jakarta.websocket.version>2.1.1</jakarta.websocket.version>
+        <slf4j.version>2.0.13</slf4j.version>
+        <logback.version>1.5.6</logback.version>
+    </properties>
+
+    <dependencies>
+
+        <!-- ===================================================== -->
+        <!--  API Jakarta WebSocket (interfaces & annotations)      -->
+        <!-- ===================================================== -->
+        <dependency>
+            <groupId>jakarta.websocket</groupId>
+            <artifactId>jakarta.websocket-api</artifactId>
+            <version>${jakarta.websocket.version}</version>
+        </dependency>
+
+        <!-- ===================================================== -->
+        <!--  Tyrus : implémentation de référence WebSocket          -->
+        <!--  (serveur embarqué, pas besoin d'installer Tomcat)     -->
+        <!-- ===================================================== -->
+        <dependency>
+            <groupId>org.glassfish.tyrus.bundles</groupId>
+            <artifactId>tyrus-standalone-client</artifactId>
+            <version>${tyrus.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.tyrus</groupId>
+            <artifactId>tyrus-server</artifactId>
+            <version>${tyrus.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.tyrus</groupId>
+            <artifactId>tyrus-container-grizzly-server</artifactId>
+            <version>${tyrus.version}</version>
+        </dependency>
+
+        <!-- ===================================================== -->
+        <!--  Jackson : sérialisation / désérialisation JSON        -->
+        <!-- ===================================================== -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <!-- ===================================================== -->
+        <!--  MongoDB Driver Sync (POJO CodecRegistry)             -->
+        <!-- ===================================================== -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>5.1.1</version>
+        </dependency>
+
+        <!-- ===================================================== -->
+        <!--  Logging : SLF4J + Logback                            -->
+        <!-- ===================================================== -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- ===================================================== -->
+            <!--  Plugin compilateur Maven                              -->
+            <!-- ===================================================== -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <!-- L'option 'release' remplace source/target et inclut automatiquement
+                     l'emplacement des modules systeme du JDK cible. -->
+                <configuration>
+                    <release>17</release>
+                </configuration>
+            </plugin>
+
+            <!-- ===================================================== -->
+            <!--  Exec Maven Plugin : lance le serveur sans empaqueter  -->
+            <!--  Commande : ./mvnw exec:java                           -->
+            <!-- ===================================================== -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <mainClass>com.chat.server.ChatServer</mainClass>
+                </configuration>
+            </plugin>
+
+            <!-- ===================================================== -->
+            <!--  Maven Shade Plugin : génère un JAR exécutable        -->
+            <!--  "fat JAR" avec toutes les dépendances incluses       -->
+            <!-- ===================================================== -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <!-- Classe principale à exécuter -->
+                                    <mainClass>com.chat.server.ChatServer</mainClass>
+                                </transformer>
+                                <!-- Nécessaire pour fusionner les fichiers de services Java -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

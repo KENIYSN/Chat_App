@@ -1,0 +1,12 @@
+/Users/esserdaoui/ChatApp_Projet/MiniProjet_JEE/src/main/java/com/chat/controller/ChatEndpoint.java
+/Users/esserdaoui/ChatApp_Projet/MiniProjet_JEE/src/main/java/com/chat/database/MongoDBConnection.java
+/Users/esserdaoui/ChatApp_Projet/MiniProjet_JEE/src/main/java/com/chat/model/Friendship.java
+/Users/esserdaoui/ChatApp_Projet/MiniProjet_JEE/src/main/java/com/chat/model/Group.java
+/Users/esserdaoui/ChatApp_Projet/MiniProjet_JEE/src/main/java/com/chat/model/Message.java
+/Users/esserdaoui/ChatApp_Projet/MiniProjet_JEE/src/main/java/com/chat/model/User.java
+/Users/esserdaoui/ChatApp_Projet/MiniProjet_JEE/src/main/java/com/chat/repository/FriendshipRepository.java
+/Users/esserdaoui/ChatApp_Projet/MiniProjet_JEE/src/main/java/com/chat/repository/GroupRepository.java
+/Users/esserdaoui/ChatApp_Projet/MiniProjet_JEE/src/main/java/com/chat/repository/MessageRepository.java
+/Users/esserdaoui/ChatApp_Projet/MiniProjet_JEE/src/main/java/com/chat/repository/UserRepository.java
+/Users/esserdaoui/ChatApp_Projet/MiniProjet_JEE/src/main/java/com/chat/server/ChatServer.java
+/Users/esserdaoui/ChatApp_Projet/MiniProjet_JEE/src/main/java/com/chat/server/RestApiServer.java

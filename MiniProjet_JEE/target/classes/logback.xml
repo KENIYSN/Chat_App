@@ -1,0 +1,24 @@
+<configuration>
+
+    <!-- Appender console avec un format lisible et coloré -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Niveau général : INFO (changez en DEBUG pour plus de détails) -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- Niveau DEBUG spécifique à nos packages applicatifs -->
+    <logger name="com.chat" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Réduction du bruit des bibliothèques tierces -->
+    <logger name="org.glassfish.tyrus" level="WARN"/>
+    <logger name="org.glassfish.grizzly" level="WARN"/>
+
+</configuration>
